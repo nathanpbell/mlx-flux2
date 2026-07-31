@@ -5,6 +5,8 @@ WEIGHT_FILES = [
     "flux-2-klein-4b-fp8.safetensors",
     "flux-2-klein-4b.safetensors",
     "flux-2-klein-base-4b.safetensors",
+    "flux-2-klein-9b.safetensors",
+    "flux-2-klein-base-9b.safetensors",
 ]
 TOKENIZER_FALLBACK_DIR = "FLUX.2-klein-base-4B"
 TEXT_ENCODER_MAX_LENGTH = 512
