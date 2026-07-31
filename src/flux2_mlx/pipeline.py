@@ -237,6 +237,7 @@ class Flux2Pipeline:
         guidance: float = DEFAULT_GUIDANCE,
         seed: int | None = None,
         input_images: Iterable[Image.Image] | None = None,
+        reference_conditioning: tuple[mx.array, mx.array] | None = None,
         guidance_distilled: bool | None = None,
         verbose: bool = False,
         eval_freq: int = 1,
@@ -268,8 +269,13 @@ class Flux2Pipeline:
                 print(f"           ├─ model:    {te_breakdown['model']*1000:.1f}ms")
                 print(f"           └─ prc_txt:  {te_breakdown['prc_txt']*1000:.1f}ms")
 
+        if input_images and reference_conditioning is not None:
+            raise ValueError("Pass input_images or reference_conditioning, not both")
+
         img_cond_seq, img_cond_seq_ids = (None, None)
-        if input_images:
+        if reference_conditioning is not None:
+            img_cond_seq, img_cond_seq_ids = reference_conditioning
+        elif input_images:
             t0 = time.perf_counter()
             img_cond_seq, img_cond_seq_ids = encode_image_refs(self.vae, list(input_images))
             if verbose:
