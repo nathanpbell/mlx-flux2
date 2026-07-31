@@ -124,8 +124,12 @@ def encode_image_refs(
         latent = ae.encode(mx.expand_dims(img, axis=0))
         latent = latent.transpose(0, 3, 1, 2)[0]
         encoded_refs.append(latent)
-    # Use compact time IDs (1, 2, 3, ...) to avoid host-side compression in compress_time()
-    t_off = [mx.array([1 + i], dtype=mx.int32) for i in range(len(encoded_refs))]
+    # Keep reference images on distinct RoPE time coordinates, matching the
+    # official FLUX.2 implementation (10, 20, 30, ... by default).
+    t_off = [
+        mx.array([time_offset_scale * (1 + i)], dtype=mx.int32)
+        for i in range(len(encoded_refs))
+    ]
     ref_tokens, ref_ids = listed_prc_img(encoded_refs, t_coord=t_off)
     ref_tokens = mx.concatenate(ref_tokens, axis=0)
     ref_ids = mx.concatenate(ref_ids, axis=0)
